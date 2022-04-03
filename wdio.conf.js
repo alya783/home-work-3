@@ -178,7 +178,15 @@ exports.config = {
      * @param {Object}         browser      instance of created browser/device session
      */
     before: function (capabilities, specs) {
-
+        browser.addCommand("waitForText", async function (text, timeout) {
+            await browser.waitUntil(
+                async () => {
+                    const elemDisplayed = await this.waitForDisplayed();
+                    const elemText = await this.getText();
+                    return elemDisplayed && elemText === text;
+                }, {timeout: timeout}
+            )
+        }, true)
     },
     async beforeScenario(world) {
         addEnvironment('SERVER', 'LOCAL');
